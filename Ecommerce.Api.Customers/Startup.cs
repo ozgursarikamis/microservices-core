@@ -1,5 +1,10 @@
+using AutoMapper;
+using Ecommerce.Api.Customers.Db;
+using Ecommerce.Api.Customers.Interfaces;
+using Ecommerce.Api.Customers.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +23,14 @@ namespace Ecommerce.Api.Customers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<CustomersDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("Customers");
+            });
+
+            services.AddScoped<ICustomersProvider, CustomersProvider>();
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddControllers();
         }
 
