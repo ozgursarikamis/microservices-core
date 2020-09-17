@@ -14,8 +14,8 @@ namespace Ecommerce.Api.Search.Controllers
         {
             _searchService = searchService;
         }
-
-        public async Task<IActionResult> SearchAsync(SearchTerm term)
+        [HttpPost]
+        public async Task<IActionResult> SearchAsync([FromBody]SearchTerm term)
         {
             var (isSuccess, searchResults) = await _searchService.SearchAsync(term.CustomerId);
             return isSuccess ? (IActionResult) Ok(searchResults) : NotFound();
