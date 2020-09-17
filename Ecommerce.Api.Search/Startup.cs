@@ -1,3 +1,4 @@
+using System;
 using Ecommerce.Api.Search.Interfaces;
 using Ecommerce.Api.Search.Services;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +22,10 @@ namespace Ecommerce.Api.Search
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ISearchService, SearchService>();
+            services.AddHttpClient("OrdersService", config =>
+            {
+                config.BaseAddress = new Uri(Configuration["Services:Orders"]);
+            });
             services.AddControllers();
         }
 
