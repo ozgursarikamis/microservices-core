@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
 
 namespace Ecommerce.Api.Search
 {
@@ -31,10 +32,11 @@ namespace Ecommerce.Api.Search
                 config.BaseAddress = new Uri(uriString);
             });
             services.AddHttpClient("ProductsService", config =>
-            {
-                var uriString = Configuration["Services:Products"];
-                config.BaseAddress = new Uri(uriString);
-            });
+                {
+                    var uriString = Configuration["Services:Products"];
+                    config.BaseAddress = new Uri(uriString);
+                })
+                .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(5, _ => TimeSpan.FromMilliseconds(500)));
             services.AddControllers();
         }
 
