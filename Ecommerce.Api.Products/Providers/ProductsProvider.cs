@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Ecommerce.Api.Products.Db;
 using Ecommerce.Api.Products.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
@@ -44,7 +45,28 @@ namespace Ecommerce.Api.Products.Providers
                 var products = await _context.Products.ToListAsync();
                 if (products != null && products.Any())
                 {
-                    var result = _mapper.Map<IEnumerable<Db.Product>, IEnumerable<Models.Product>>(products);
+                    var result = _mapper.Map<IEnumerable<Product>, IEnumerable<Models.Product>>(products);
+                    return (true, result, null);
+                }
+
+                return (false, null, "Not Found");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return (false, null, e.Message);
+            }
+        }
+         
+        public async Task<(bool IsSuccess, Models.Product Product, string ErrorMessage)> 
+            GetProductAsync(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (product != null)
+                {
+                    var result = _mapper.Map<Product, Models.Product>(product);
                     return (true, result, null);
                 }
 
