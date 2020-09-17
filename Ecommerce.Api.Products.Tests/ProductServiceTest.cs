@@ -55,7 +55,58 @@ namespace Ecommerce.Api.Products.Tests
                 context.Products.Add(product);
                 context.SaveChanges();
             }
+        }
 
+        [Fact]
+        public async Task GetProductReturnProductUsingValidId()
+        {
+            var options = new DbContextOptionsBuilder<ProductsDbContext>()
+                .EnableSensitiveDataLogging()
+                .UseInMemoryDatabase(nameof(GetProductReturnProductUsingValidId))
+                .Options;
+
+            var context = new ProductsDbContext(options);
+            CreateProducts(context);
+
+            var productProfile = new ProductProfile();
+            var configuration = new MapperConfiguration(config =>
+                config.AddProfile(productProfile));
+
+            var mapper = new Mapper(configuration);
+
+            var provider = new ProductsProvider(context, null, mapper);
+
+            var (isSuccess, product, errorMessage) = await provider.GetProductAsync(1);
+
+            Assert.True(isSuccess);
+            Assert.NotNull(product);
+            Assert.True(product.Id == 1);
+            Assert.Null(errorMessage);
+        }
+        [Fact]
+        public async Task GetProductReturnsProductUsingInvalidId()
+        {
+            var options = new DbContextOptionsBuilder<ProductsDbContext>()
+                .EnableSensitiveDataLogging()
+                .UseInMemoryDatabase(nameof(GetProductReturnsProductUsingInvalidId))
+                .Options;
+
+            var context = new ProductsDbContext(options);
+            CreateProducts(context);
+
+            var productProfile = new ProductProfile();
+            var configuration = new MapperConfiguration(config =>
+                config.AddProfile(productProfile));
+
+            var mapper = new Mapper(configuration);
+
+            var provider = new ProductsProvider(context, null, mapper);
+
+            var (isSuccess, product, errorMessage) = await provider.GetProductAsync(-1);
+
+            Assert.False(isSuccess);
+            Assert.Null(product);
+            Assert.NotNull(errorMessage);
         }
     }
 }
