@@ -14,6 +14,7 @@ namespace Ecommerce.Api.Search.Controllers
         {
             _searchService = searchService;
         }
+
         [HttpPost]
         public async Task<IActionResult> SearchAsync([FromBody]SearchTerm term)
         {

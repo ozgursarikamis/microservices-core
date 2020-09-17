@@ -23,10 +23,17 @@ namespace Ecommerce.Api.Search
         {
             services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<IOrdersService, OrdersService>();
+            services.AddScoped<IProductsService, ProductsService>();
 
             services.AddHttpClient("OrdersService", config =>
             {
-                config.BaseAddress = new Uri(Configuration["Services:Orders"]);
+                var uriString = Configuration["Services:Orders"];
+                config.BaseAddress = new Uri(uriString);
+            });
+            services.AddHttpClient("ProductsService", config =>
+            {
+                var uriString = Configuration["Services:Products"];
+                config.BaseAddress = new Uri(uriString);
             });
             services.AddControllers();
         }
