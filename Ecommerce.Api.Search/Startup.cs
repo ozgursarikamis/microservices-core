@@ -25,6 +25,7 @@ namespace Ecommerce.Api.Search
             services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<IOrdersService, OrdersService>();
             services.AddScoped<IProductsService, ProductsService>();
+            services.AddScoped<ICustomersService, CustomerService>();
 
             services.AddHttpClient("OrdersService", config =>
             {
@@ -37,6 +38,13 @@ namespace Ecommerce.Api.Search
                     config.BaseAddress = new Uri(uriString);
                 })
                 .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(5, _ => TimeSpan.FromMilliseconds(500)));
+
+            services.AddHttpClient("CustomersService", config =>
+            {
+                var uriString = Configuration["Services:Customers"];
+                config.BaseAddress = new Uri(uriString);
+            });
+
             services.AddControllers();
         }
 
